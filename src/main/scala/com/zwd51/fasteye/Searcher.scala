@@ -1,5 +1,6 @@
 package com.zwd51.fasteye
 
+import java.awt.image.BufferedImage
 import java.io.{File, FileInputStream}
 import javax.imageio.ImageIO
 
@@ -13,6 +14,20 @@ import org.apache.lucene.store.FSDirectory
   * Created by Connor on 12/13/15.
   */
 object Searcher {
+  val ir = DirectoryReader.open(FSDirectory.open(new File("index")))
+  val searcher = new GenericFastImageSearcher(6, classOf[CEDD])
+
+  def search(image: BufferedImage): Seq[String] = {
+    val hits = searcher.search(image, ir)
+    val goodIds = for (i <- 0 to hits.length - 1)
+      yield s"'${hits.doc(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)(0)}'"
+    goodIds
+  }
+
+  def close() = {
+    ir.close()
+  }
+
   def main(args: Array[String]) {
     val dir = "images"
     val file = new File(dir)
