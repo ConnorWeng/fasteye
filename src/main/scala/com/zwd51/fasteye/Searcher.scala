@@ -1,0 +1,32 @@
+package com.zwd51.fasteye
+
+import java.io.{File, FileInputStream}
+import javax.imageio.ImageIO
+
+import net.semanticmetadata.lire.DocumentBuilder
+import net.semanticmetadata.lire.imageanalysis.CEDD
+import net.semanticmetadata.lire.impl.GenericFastImageSearcher
+import org.apache.lucene.index.DirectoryReader
+import org.apache.lucene.store.FSDirectory
+
+/**
+  * Created by Connor on 12/13/15.
+  */
+object Searcher {
+  def main(args: Array[String]) {
+    val dir = "images"
+    val file = new File(dir)
+    val images = file.list
+    println(s"searching $dir/${images(3)}")
+    val bufferedImage = ImageIO.read(new FileInputStream(s"$dir/${images(3)}"))
+    val ir = DirectoryReader.open(FSDirectory.open(new File("index")))
+    val searcher = new GenericFastImageSearcher(5, classOf[CEDD])
+    val hits = searcher.search(bufferedImage, ir)
+    for (i <- 0 to hits.length - 1) {
+      val fileName = hits.doc(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)(0)
+      println(s"$fileName:${hits.score(i)}")
+    }
+    ir.close()
+    println("finish")
+  }
+}
