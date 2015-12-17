@@ -17,6 +17,7 @@ class SimilarImagesServlet extends HttpServlet {
     if (url != null) {
       SourceImage(url).withBufferedImage { bufferedImage =>
         val goodIds = Searcher.search(bufferedImage).mkString(",")
+        println(s"$url returns: [$goodIds]")
         resp.getWriter.write(s"[$goodIds]")
       }
     } else {
