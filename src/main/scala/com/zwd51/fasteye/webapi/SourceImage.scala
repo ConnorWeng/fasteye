@@ -23,7 +23,7 @@ case class SourceImage(url: String) {
     conn.setConnectTimeout(5*1000)
     val is = conn.getInputStream
     val buf: Array[Byte] = new Array[Byte](1024*100)
-    val dir = new File("downloads")
+    val dir = new File(sys.env("FASTEYE_DOWNLOADS_DIR"))
     if (!dir.exists()) {
       dir.mkdirs()
     }

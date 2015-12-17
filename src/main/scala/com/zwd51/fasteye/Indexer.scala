@@ -11,11 +11,11 @@ import net.semanticmetadata.lire.utils.LuceneUtils
   */
 object Indexer {
   def main(args: Array[String]): Unit = {
-    val dir = "images"
+    val dir = sys.env("FASTEYE_IMAGES_DIR")
     val file = new File(dir)
     val images = file.list
     val documentBuilder = DocumentBuilderFactory.getCEDDDocumentBuilder
-    val iw = LuceneUtils.createIndexWriter("index", false, LuceneUtils.AnalyzerType.WhitespaceAnalyzer)
+    val iw = LuceneUtils.createIndexWriter(sys.env("FASTEYE_INDEX_DIR"), false, LuceneUtils.AnalyzerType.WhitespaceAnalyzer)
     val startTime = System.currentTimeMillis
     images.foreach { image =>
       println(s"indexing:$image")
