@@ -19,7 +19,7 @@ object Searcher {
 
   def search(image: BufferedImage): Seq[String] = {
     val hits = searcher.search(image, ir)
-    val goodIds = for (i <- 0 to hits.length - 1)
+    val goodIds = for (i <- 0 to hits.length - 1 if hits.score(i) < 15)
       yield s"'${hits.doc(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)(0)}'"
     goodIds
   }
