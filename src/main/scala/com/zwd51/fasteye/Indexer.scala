@@ -6,6 +6,8 @@ import javax.imageio.ImageIO
 import net.semanticmetadata.lire.DocumentBuilderFactory
 import net.semanticmetadata.lire.utils.LuceneUtils
 
+import scala.util.{Failure, Success, Try}
+
 /**
   * Created by Connor on 12/13/15.
   */
@@ -20,8 +22,11 @@ object Indexer {
     images.foreach { image =>
       println(s"indexing:$image")
       val bufferedImage = ImageIO.read(new FileInputStream(s"$dir/$image"))
-      val document = documentBuilder.createDocument(bufferedImage, image.split('.')(0));
-      iw.addDocument(document)
+      val document = Try(documentBuilder.createDocument(bufferedImage, image.split('.')(0)))
+      document match {
+        case Success(d) => iw.addDocument(d)
+        case Failure(e) => println(s"error:$image")
+      }
     }
     iw.close()
     println(s"finished, elapsed time:${System.currentTimeMillis - startTime}")
